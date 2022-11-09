@@ -9,26 +9,34 @@ mongoose.connect("mongodb+srv://micaiahcape22:micaiah05@urlshortener.afsxdo4.mon
 
 require('dotenv').config();
 
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
 
 
 const app = express();
 app.use(cors());
+app.use(allowCrossDomain);
 app.use(express.json())
 
 //has to be json
 app.get("/", (req, res) => {
-    res.set({'Access-Control-Allow-Origin': '*'});
+    res.header('Access-Control-Allow-Origin', '*');
     res.send("This is CORS friendly!")
 })
 
 app.get("/n", (req, res) => {
-    res.set({'Access-Control-Allow-Origin': '*'});
+    res.header('Access-Control-Allow-Origin', '*');
     res.send("a6ehs57r6du6g5syegybsdnutimd7nu6ry5esbdnutimn7u")
 })
 
 app.get("/api/songs/", (req, res) => {
     Songs.find({}, (err, data) => {
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         if(err) return console.log(err);
         res.send(data)
     })
@@ -36,7 +44,7 @@ app.get("/api/songs/", (req, res) => {
 
 app.get("/api/songs/popular/:count", (req, res) => {
     Songs.find({}).limit(req.params.count).exec((err, data) => {
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         if (err) return console.log(err)
 
         res.send(data)
@@ -45,7 +53,7 @@ app.get("/api/songs/popular/:count", (req, res) => {
 
 app.get("/api/songs/recent/:count", (req, res) => {
     Songs.find({}).limit(req.params.count).sort({date: -1}).exec((err, data) => {
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         if (err) return console.log(err)
         res.send(data)
     })
@@ -54,13 +62,13 @@ app.get("/api/songs/recent/:count", (req, res) => {
 app.get("/api/songs/:link", (req, res) => {
     if(req.params.link.length == 7){
         Songs.find({generatedLink: "/" + req.params.link}).exec((err, data) => {
-            res.set({'Access-Control-Allow-Origin': '*'});
+            res.header('Access-Control-Allow-Origin', '*');
             if (err) res.send(err)
             res.send(data);
         })
     }else{
         Songs.find({"download.ytLink": "https://www.youtube.com/watch?v=" + req.params.link}, (err, data) => {
-            res.set({'Access-Control-Allow-Origin': '*'});
+            res.header('Access-Control-Allow-Origin', '*');
             res.send(data);
         })
     }
@@ -68,14 +76,14 @@ app.get("/api/songs/:link", (req, res) => {
 
 app.post('/api/songs/:link', (req, res) => {
     Songs.findOneAndUpdate({generatedLink: "/" + req.params.link}, req.body, {returnOriginal: false}, (err, data) => {
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         res.send(data);
     })
 })
 
 app.post('/api/songs/:link/add', (req, res) => {
     Songs.findOneAndUpdate({generatedLink: "/" + req.params.link}, req.body, {returnOriginal: false}, (err, data) => {
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         res.send(data);
     })
 })
@@ -143,7 +151,7 @@ app.get("/search", (req, res) => {
         
     }).sort(criteria).exec((err, data) => {
         if(err) return console.log(err);
-        res.set({'Access-Control-Allow-Origin': '*'});
+        res.header('Access-Control-Allow-Origin', '*');
         if(!needProcessing){
             res.send(data)
         }else{
